@@ -24,6 +24,36 @@ struct PrimitiveTypeState {
 	}
 };
 
+template <typename T>
+struct EnsureExecutorType {
+	using type = T;
+};
+
+template <>
+struct EnsureExecutorType<bool> {
+	using type = PrimitiveType<bool>;
+};
+template <>
+struct EnsureExecutorType<string_t> {
+	using type = PrimitiveType<string_t>;
+};
+template <>
+struct EnsureExecutorType<int32_t> {
+	using type = PrimitiveType<int32_t>;
+};
+template <>
+struct EnsureExecutorType<int64_t> {
+	using type = PrimitiveType<int64_t>;
+};
+template <>
+struct EnsureExecutorType<float> {
+	using type = PrimitiveType<float>;
+};
+template <>
+struct EnsureExecutorType<double> {
+	using type = PrimitiveType<double>;
+};
+
 struct ExecutorBaseType {
 	ExecutorBaseType() : is_null(false) {};
 
@@ -82,12 +112,13 @@ struct StructTypeState {
 	}
 };
 
-template <class A_TYPE>
+template <class A>
 struct StructTypeUnary : ExecutorBaseType {
+	using A_TYPE = EnsureExecutorType<A>::type;
 	A_TYPE a_val;
 
 	StructTypeUnary() = default;
-	StructTypeUnary(A_TYPE a) : a_val(a) {
+	StructTypeUnary(A a) : a_val(a) {
 	}
 
 	using STRUCT_STATE = StructTypeState<1>;
@@ -120,13 +151,16 @@ struct StructTypeUnary : ExecutorBaseType {
 	}
 };
 
-template <class A_TYPE, class B_TYPE>
+template <class A, class B>
 struct StructTypeBinary : ExecutorBaseType {
+	using A_TYPE = EnsureExecutorType<A>::type;
+	using B_TYPE = EnsureExecutorType<B>::type;
+
 	A_TYPE a_val;
 	B_TYPE b_val;
 
 	StructTypeBinary() = default;
-	StructTypeBinary(A_TYPE a, B_TYPE b) : a_val(a), b_val(b) {
+	StructTypeBinary(A a, B b) : a_val(a), b_val(b) {
 	}
 
 	using STRUCT_STATE = StructTypeState<2>;
@@ -169,12 +203,16 @@ struct StructTypeBinary : ExecutorBaseType {
 
 template <class A_TYPE, class B_TYPE, class C_TYPE>
 struct StructTypeTernary : ExecutorBaseType {
+	using A_TYPE = EnsureExecutorType<A>::type;
+	using B_TYPE = EnsureExecutorType<B>::type;
+	using C_TYPE = EnsureExecutorType<C>::type;
+
 	A_TYPE a_val;
 	B_TYPE b_val;
 	C_TYPE c_val;
 
 	StructTypeTernary() = default;
-	StructTypeTernary(A_TYPE a, B_TYPE b, C_TYPE c) : a_val(a), b_val(b), c_val(c) {
+	StructTypeTernary(A a, B b, C c) : a_val(a), b_val(b), c_val(c) {
 	}
 
 	using STRUCT_STATE = StructTypeState<3>;
@@ -223,15 +261,20 @@ struct StructTypeTernary : ExecutorBaseType {
 	}
 };
 
-template <class A_TYPE, class B_TYPE, class C_TYPE, class D_TYPE>
+template <class A, class B, class C, class D>
 struct StructTypeQuaternary : ExecutorBaseType {
+	using A_TYPE = EnsureExecutorType<A>::type;
+	using B_TYPE = EnsureExecutorType<B>::type;
+	using C_TYPE = EnsureExecutorType<C>::type;
+	using D_TYPE = EnsureExecutorType<D>::type;
+
 	A_TYPE a_val;
 	B_TYPE b_val;
 	C_TYPE c_val;
 	D_TYPE d_val;
 
 	StructTypeQuaternary() = default;
-	StructTypeQuaternary(A_TYPE a, B_TYPE b, C_TYPE c, D_TYPE d) : a_val(a), b_val(b), c_val(c), d_val(d) {
+	StructTypeQuaternary(A a, B b, C c, D d) : a_val(a), b_val(b), c_val(c), d_val(d) {
 	}
 
 	using STRUCT_STATE = StructTypeState<4>;
