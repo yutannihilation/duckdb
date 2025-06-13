@@ -118,7 +118,7 @@ struct StructTypeState {
 
 template <class A>
 struct StructTypeUnary : ExecutorBaseType {
-	using A_TYPE = EnsureExecutorType<A>::type;
+	using A_TYPE = typename EnsureExecutorType<A>::type;
 	A_TYPE a_val;
 
 	StructTypeUnary() = default;
@@ -157,8 +157,8 @@ struct StructTypeUnary : ExecutorBaseType {
 
 template <class A, class B>
 struct StructTypeBinary : ExecutorBaseType {
-	using A_TYPE = EnsureExecutorType<A>::type;
-	using B_TYPE = EnsureExecutorType<B>::type;
+	using A_TYPE = typename EnsureExecutorType<A>::type;
+	using B_TYPE = typename EnsureExecutorType<B>::type;
 
 	A_TYPE a_val;
 	B_TYPE b_val;
@@ -207,9 +207,9 @@ struct StructTypeBinary : ExecutorBaseType {
 
 template <class A_TYPE, class B_TYPE, class C_TYPE>
 struct StructTypeTernary : ExecutorBaseType {
-	using A_TYPE = EnsureExecutorType<A>::type;
-	using B_TYPE = EnsureExecutorType<B>::type;
-	using C_TYPE = EnsureExecutorType<C>::type;
+	using A_TYPE = typename EnsureExecutorType<A>::type;
+	using B_TYPE = typename EnsureExecutorType<B>::type;
+	using C_TYPE = typename EnsureExecutorType<C>::type;
 
 	A_TYPE a_val;
 	B_TYPE b_val;
@@ -267,10 +267,10 @@ struct StructTypeTernary : ExecutorBaseType {
 
 template <class A, class B, class C, class D>
 struct StructTypeQuaternary : ExecutorBaseType {
-	using A_TYPE = EnsureExecutorType<A>::type;
-	using B_TYPE = EnsureExecutorType<B>::type;
-	using C_TYPE = EnsureExecutorType<C>::type;
-	using D_TYPE = EnsureExecutorType<D>::type;
+	using A_TYPE = typename EnsureExecutorType<A>::type;
+	using B_TYPE = typename EnsureExecutorType<B>::type;
+	using C_TYPE = typename EnsureExecutorType<C>::type;
+	using D_TYPE = typename EnsureExecutorType<D>::type;
 
 	A_TYPE a_val;
 	B_TYPE b_val;
