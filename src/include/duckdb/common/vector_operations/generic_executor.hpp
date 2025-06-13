@@ -24,9 +24,15 @@ struct PrimitiveTypeState {
 	}
 };
 
+struct ExecutorBaseType {
+	ExecutorBaseType() : is_null(false) {};
+
+	bool is_null;
+};
+
 // Forward declaration
 template <class INPUT_TYPE>
-struct PrimitiveType : ExecutorBaseType {};
+struct PrimitiveType;
 
 template <typename T>
 struct EnsureExecutorType {
@@ -56,12 +62,6 @@ struct EnsureExecutorType<float> {
 template <>
 struct EnsureExecutorType<double> {
 	using type = PrimitiveType<double>;
-};
-
-struct ExecutorBaseType {
-	ExecutorBaseType() : is_null(false) {};
-
-	bool is_null;
 };
 
 template <class INPUT_TYPE>
@@ -205,7 +205,7 @@ struct StructTypeBinary : ExecutorBaseType {
 	}
 };
 
-template <class A_TYPE, class B_TYPE, class C_TYPE>
+template <class A, class B, class C>
 struct StructTypeTernary : ExecutorBaseType {
 	using A_TYPE = typename EnsureExecutorType<A>::type;
 	using B_TYPE = typename EnsureExecutorType<B>::type;
@@ -225,7 +225,7 @@ struct StructTypeTernary : ExecutorBaseType {
 		return is_null || a_val.is_null || b_val.is_null || c_val.is_null;
 	}
 
-	static StructTypeTernary<A_TYPE, B_TYPE, C_TYPE> ConstructType(STRUCT_STATE &state, idx_t i) {
+	static StructTypeTernary<A, B, C> ConstructType(STRUCT_STATE &state, idx_t i) {
 		auto &a_data = state.child_data[0];
 		auto &b_data = state.child_data[1];
 		auto &c_data = state.child_data[2];
@@ -233,22 +233,22 @@ struct StructTypeTernary : ExecutorBaseType {
 		auto a_idx = a_data.sel->get_index(i);
 		auto b_idx = b_data.sel->get_index(i);
 		auto c_idx = c_data.sel->get_index(i);
-		StructTypeTernary<A_TYPE, B_TYPE, C_TYPE> result;
+		StructTypeTernary<A, B, C> result;
 		if (!a_data.validity.RowIsValid(a_idx) || !b_data.validity.RowIsValid(b_idx) ||
 		    !c_data.validity.RowIsValid(c_idx)) {
 			result.is_null = true;
 			return result;
 		}
-		auto a_ptr = UnifiedVectorFormat::GetData<A_TYPE>(a_data);
-		auto b_ptr = UnifiedVectorFormat::GetData<B_TYPE>(b_data);
-		auto c_ptr = UnifiedVectorFormat::GetData<C_TYPE>(c_data);
+		auto a_ptr = UnifiedVectorFormat::GetData<A>(a_data);
+		auto b_ptr = UnifiedVectorFormat::GetData<B>(b_data);
+		auto c_ptr = UnifiedVectorFormat::GetData<C>(c_data);
 		result.a_val = a_ptr[a_idx];
 		result.b_val = b_ptr[b_idx];
 		result.c_val = c_ptr[c_idx];
 		return result;
 	}
 
-	static void AssignResult(Vector &result, idx_t i, StructTypeTernary<A_TYPE, B_TYPE, C_TYPE> value) {
+	static void AssignResult(Vector &result, idx_t i, StructTypeTernary<A, B, C> value) {
 		auto &entries = StructVector::GetEntries(result);
 
 		if (value.ContainsNull()) {
@@ -256,9 +256,9 @@ struct StructTypeTernary : ExecutorBaseType {
 			FlatVector::SetNull(*entries[1], i, true);
 			FlatVector::SetNull(*entries[2], i, true);
 		}
-		auto a_data = FlatVector::GetData<A_TYPE>(*entries[0]);
-		auto b_data = FlatVector::GetData<B_TYPE>(*entries[1]);
-		auto c_data = FlatVector::GetData<C_TYPE>(*entries[2]);
+		auto a_data = FlatVector::GetData<A>(*entries[0]);
+		auto b_data = FlatVector::GetData<B>(*entries[1]);
+		auto c_data = FlatVector::GetData<C>(*entries[2]);
 		a_data[i] = value.a_val;
 		b_data[i] = value.b_val;
 		c_data[i] = value.c_val;
