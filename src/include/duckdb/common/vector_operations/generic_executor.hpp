@@ -24,6 +24,10 @@ struct PrimitiveTypeState {
 	}
 };
 
+// Forward declaration
+template <class INPUT_TYPE>
+struct PrimitiveType : ExecutorBaseType {};
+
 template <typename T>
 struct EnsureExecutorType {
 	using type = T;
