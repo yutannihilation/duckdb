@@ -73,6 +73,37 @@ struct PrimitiveType : ExecutorBaseType {
 	INPUT_TYPE val;
 
 	using STRUCT_STATE = PrimitiveTypeState;
+	
+	// Implicit conversion to INPUT_TYPE for transparent access
+	operator INPUT_TYPE() const { return val; }
+	
+	// Forward arithmetic operators to make it act like INPUT_TYPE
+	template<typename U>
+	auto operator+(const U& other) const -> decltype(val + other) {
+		return val + other;
+	}
+	
+	template<typename U>
+	auto operator-(const U& other) const -> decltype(val - other) {
+		return val - other;
+	}
+	
+	template<typename U>
+	auto operator*(const U& other) const -> decltype(val * other) {
+		return val * other;
+	}
+	
+	template<typename U>
+	auto operator/(const U& other) const -> decltype(val / other) {
+		return val / other;
+	}
+	
+	// Assignment from raw type
+	PrimitiveType& operator=(const INPUT_TYPE& v) {
+		val = v;
+		is_null = false;
+		return *this;
+	}
 
 	bool ContainsNull() {
 		return is_null;
